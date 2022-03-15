@@ -1,5 +1,5 @@
 package com.example.mapdemo
 
 object Key {
-    const val TMAP_API = "l7xx0b83e431f3694dd7a4446de7d79359e6"
+    const val TMAP_API = "846fd0ff-fac4-4e07-9c7c-1950cc0131dd"
 }

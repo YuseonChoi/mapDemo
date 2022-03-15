@@ -1,17 +1,15 @@
 package com.example.mapdemo
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mapdemo.databinding.ViewholderSearchResultItemBinding
-import com.example.mapdemo.model.SearchResultEntity
+import com.example.mapdemo.model.poi.schema.entity.SearchResultEntity
 
-class SearchRecyclerAdapter :
-    RecyclerView.Adapter<SearchRecyclerAdapter.SearchResultItemViewHolder>() {
+class SearchRecyclerAdapter : RecyclerView.Adapter<SearchRecyclerAdapter.SearchResultItemViewHolder>() {
 
     private var searchResultList: List<SearchResultEntity> = listOf()
-    private lateinit var searchResultClickListener: (SearchResultEntity) -> Unit
+    lateinit var searchResultClickListener: (SearchResultEntity) -> Unit
 
     class SearchResultItemViewHolder(
         private val binding: ViewholderSearchResultItemBinding,
@@ -19,8 +17,8 @@ class SearchRecyclerAdapter :
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bindData(data: SearchResultEntity) = with(binding) {
-            textTextView.text = data.name
-            subtextTextView.text = data.fullAdress
+            textTextView.text = data.fullAdress
+            subtextTextView.text = data.name
         }
 
         fun bindViews(data: SearchResultEntity) {
@@ -28,17 +26,15 @@ class SearchRecyclerAdapter :
                 searchResultClickListener(data)
             }
         }
-    }
 
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchResultItemViewHolder {
-        val view = ViewholderSearchResultItemBinding.inflate(
-            LayoutInflater.from(parent.context),
-            parent,
-            false
-        )
+        val view = ViewholderSearchResultItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return SearchResultItemViewHolder(view, searchResultClickListener)
     }
+
+    override fun getItemViewType(position: Int): Int = R.layout.viewholder_search_result_item
 
     override fun onBindViewHolder(holder: SearchResultItemViewHolder, position: Int) {
         holder.bindData(searchResultList[position])
@@ -47,12 +43,11 @@ class SearchRecyclerAdapter :
 
     override fun getItemCount(): Int = searchResultList.size
 
-    fun setSearchResultList(
-        searchResultList: List<SearchResultEntity>,
-        searchResultClickListener: (SearchResultEntity) -> Unit
-    ) {
+    fun setSearchResultList(searchResultList: List<SearchResultEntity>, searchResultClickListener: (SearchResultEntity) -> Unit) {
         this.searchResultList = searchResultList
         this.searchResultClickListener = searchResultClickListener
         notifyDataSetChanged()
     }
+
+
 }

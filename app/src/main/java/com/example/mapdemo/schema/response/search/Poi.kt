@@ -1,4 +1,4 @@
-package com.example.mapdemo.response.search
+package com.example.mapdemo.model.poi.schema.response.search
 
 data class Poi(
     //POI 의  id

@@ -1,17 +1,20 @@
 package com.example.mapdemo
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import com.example.mapdemo.MapActivity.Companion.SEARCH_RESULT_EXTRA_KEY
 import com.example.mapdemo.databinding.ActivityMainBinding
-import com.example.mapdemo.model.LocationLatLngEntity
-import com.example.mapdemo.model.SearchResultEntity
-import com.example.mapdemo.response.search.Poi
-import com.example.mapdemo.response.search.Pois
-import com.example.mapdemo.utility.RetrofitUtil
+import com.example.mapdemo.model.poi.schema.entity.LocationLatLngEntity
+import com.example.mapdemo.model.poi.schema.entity.SearchResultEntity
+import com.example.mapdemo.model.poi.schema.response.search.Poi
+import com.example.mapdemo.model.poi.schema.response.search.Pois
+import com.example.mapdemo.utillity.RetrofitUtil
 import kotlinx.coroutines.*
+import java.lang.Exception
 import kotlin.coroutines.CoroutineContext
 
 class MainActivity : AppCompatActivity(), CoroutineScope {
@@ -35,16 +38,15 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         initViews()
         bindViews()
         initData()
-//        setData()
+    }
+
+    private fun initAdapter() {
+        adapter = SearchRecyclerAdapter()
     }
 
     private fun initViews() = with(binding) {
         emptyResultTextView.isVisible = false
         recyclerView.adapter = adapter
-    }
-
-    private fun initAdapter() {
-        adapter = SearchRecyclerAdapter()
     }
 
     private fun bindViews() = with(binding) {
@@ -61,12 +63,16 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         val dataList = pois.poi.map {
             SearchResultEntity(
                 fullAdress = makeMainAdress(it),
-                name = it.name ?: "빌딩명 없음",
+                name = it.name ?: "",
                 locationLatLng = LocationLatLngEntity(it.noorLat, it.noorLon)
             )
         }
         adapter.setSearchResultList(dataList) {
-            Toast.makeText(this, "빌딩이름 : ${it.name} 주소 : ${it.fullAdress} 위도/경도 : ${it.locationLatLng}", Toast.LENGTH_SHORT).show()
+            startActivity(
+                Intent(this, MapActivity::class.java).apply {
+                    putExtra(SEARCH_RESULT_EXTRA_KEY, it)
+                }
+            )
         }
     }
 
@@ -80,9 +86,9 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
                     if (response.isSuccessful) {
                         val body = response.body()
                         withContext(Dispatchers.Main) {
-                            Log.e("response", body.toString())
-                            body?.let {searchResponse ->
-                                setData(searchResponse.searchPoiInfo.pois)
+                            Log.e("list", body.toString())
+                            body?.let { searchResponseSchema ->
+                                setData(searchResponseSchema.searchPoiInfo.pois)
                             }
                         }
                     }
@@ -109,4 +115,9 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
                     (poi.firstNo?.trim() ?: "") + " " +
                     poi.secondNo?.trim()
         }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
+    }
 }

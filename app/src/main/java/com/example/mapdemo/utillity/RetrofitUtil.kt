@@ -1,8 +1,7 @@
-package com.example.mapdemo.utility
+package com.example.mapdemo.utillity
 
 import com.example.mapdemo.BuildConfig
 import com.example.mapdemo.Url
-import com.example.mapdemo.Url.TMAP_URL
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
